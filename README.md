@@ -22,6 +22,7 @@ This is the second version. There are changes in the Joystick part, now it is co
 
 **FPGA Board with available cores:**<BR>
 - Board Test <BR>
+- Amiga AGA <BR>
 
 
 ___________________________________________________________________________<BR><BR>
