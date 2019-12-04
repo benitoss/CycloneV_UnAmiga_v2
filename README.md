@@ -1,7 +1,7 @@
 # Cyclone V UnAmiga FPGA
 
 Cyclone V UnAmiga is an Amiga 1200 computer in a FPGA board. The main core is based in a minimig core of MiST ported  by **Jepalza** to this FPGA. There is a version AGA of the UnAmiga 1200.<BR> 
-This is the second version. There are changes in the Joystick part, now it is compatible with 6 button megadrive Joypads.<BR>
+This is the second version. There are changes in the SRAM pin positions and in the Joystick part, now it is compatible with 6 button megadrive Joypads.<BR>
 
 ![alt text](https://github.com/benitoss/CycloneV_UnAmiga/blob/master/Cyclone_V_UnAmiga.jpg)
 
