@@ -1,0 +1,39 @@
+
+State Machine - |Mister_top|hdmi:hdmi|state
+Name state.videoData state.dataIsland state.dataIslandPostGuard state.dataIslandPreGuard state.dataIslandPreamble state.videoDataGuardBand state.videoDataPreamble state.controlData 
+state.controlData 0 0 0 0 0 0 0 0 
+state.videoDataPreamble 0 0 0 0 0 0 1 1 
+state.videoDataGuardBand 0 0 0 0 0 1 0 1 
+state.dataIslandPreamble 0 0 0 0 1 0 0 1 
+state.dataIslandPreGuard 0 0 0 1 0 0 0 1 
+state.dataIslandPostGuard 0 0 1 0 0 0 0 1 
+state.dataIsland 0 1 0 0 0 0 0 1 
+state.videoData 1 0 0 0 0 0 0 1 
+
+State Machine - |Mister_top|keyboard:keyb|keymap_seq_s
+Name keymap_seq_s.KM_END keymap_seq_s.KM_READ keymap_seq_s.KM_IDLE 
+keymap_seq_s.KM_IDLE 0 0 0 
+keymap_seq_s.KM_READ 0 1 1 
+keymap_seq_s.KM_END 1 0 1 
+
+State Machine - |Mister_top|ssdram256Mb:ram|SdrRoutine_v
+Name SdrRoutine_v.SdrRoutine_WriteOne SdrRoutine_v.SdrRoutine_ReadOne SdrRoutine_v.SdrRoutine_RefreshAll SdrRoutine_v.SdrRoutine_Idle SdrRoutine_v.SdrRoutine_Init SdrRoutine_v.SdrRoutine_Null 
+SdrRoutine_v.SdrRoutine_Null 0 0 0 0 0 0 
+SdrRoutine_v.SdrRoutine_Init 0 0 0 0 1 1 
+SdrRoutine_v.SdrRoutine_Idle 0 0 0 1 0 1 
+SdrRoutine_v.SdrRoutine_RefreshAll 0 0 1 0 0 1 
+SdrRoutine_v.SdrRoutine_ReadOne 0 1 0 0 0 1 
+SdrRoutine_v.SdrRoutine_WriteOne 1 0 0 0 0 1 
+
+State Machine - |Mister_top|msx:the_msx|vdp18_core:vdp|vdp18_cpuio:cpu_io_b|state_q
+Name state_q.ST_WR_PALETTE state_q.ST_WR_MODE1_2ND_RWRITE state_q.ST_WR_MODE1_2ND_VWRITE state_q.ST_WR_MODE1_2ND_VREAD state_q.ST_WR_MODE1_1ST_IDLE state_q.ST_WR_MODE1_1ST state_q.ST_RD_MODE1 state_q.ST_WR_MODE0 state_q.ST_RD_MODE0 state_q.ST_IDLE 
+state_q.ST_IDLE 0 0 0 0 0 0 0 0 0 0 
+state_q.ST_RD_MODE0 0 0 0 0 0 0 0 0 1 1 
+state_q.ST_WR_MODE0 0 0 0 0 0 0 0 1 0 1 
+state_q.ST_RD_MODE1 0 0 0 0 0 0 1 0 0 1 
+state_q.ST_WR_MODE1_1ST 0 0 0 0 0 1 0 0 0 1 
+state_q.ST_WR_MODE1_1ST_IDLE 0 0 0 0 1 0 0 0 0 1 
+state_q.ST_WR_MODE1_2ND_VREAD 0 0 0 1 0 0 0 0 0 1 
+state_q.ST_WR_MODE1_2ND_VWRITE 0 0 1 0 0 0 0 0 0 1 
+state_q.ST_WR_MODE1_2ND_RWRITE 0 1 0 0 0 0 0 0 0 1 
+state_q.ST_WR_PALETTE 1 0 0 0 0 0 0 0 0 1 

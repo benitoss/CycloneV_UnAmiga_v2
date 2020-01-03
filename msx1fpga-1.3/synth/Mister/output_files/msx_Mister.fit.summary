@@ -1,0 +1,16 @@
+Fitter Status : Successful - Thu Dec 26 09:40:26 2019
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : msx_Mister
+Top-level Entity Name : Mister_top
+Family : Cyclone IV E
+Device : EP4CE22F17C8
+Timing Models : Final
+Total logic elements : 15,064 / 22,320 ( 67 % )
+    Total combinational functions : 11,945 / 22,320 ( 54 % )
+    Dedicated logic registers : 7,932 / 22,320 ( 36 % )
+Total registers : 7932
+Total pins : 86 / 154 ( 56 % )
+Total virtual pins : 0
+Total memory bits : 475,602 / 608,256 ( 78 % )
+Embedded Multiplier 9-bit elements : 21 / 132 ( 16 % )
+Total PLLs : 2 / 4 ( 50 % )

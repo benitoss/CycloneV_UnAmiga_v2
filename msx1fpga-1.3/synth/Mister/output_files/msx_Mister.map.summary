@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Thu Dec 26 09:38:29 2019
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : msx_Mister
+Top-level Entity Name : Mister_top
+Family : Cyclone IV E
+Total logic elements : 17,027
+    Total combinational functions : 11,926
+    Dedicated logic registers : 7,980
+Total registers : 7980
+Total pins : 86
+Total virtual pins : 0
+Total memory bits : 475,602
+Embedded Multiplier 9-bit elements : 21
+Total PLLs : 2
