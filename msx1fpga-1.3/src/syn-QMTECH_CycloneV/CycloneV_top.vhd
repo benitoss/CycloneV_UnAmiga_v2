@@ -104,14 +104,14 @@ entity CycloneV_top is
 		JOY_CLK				: out   std_logic;
 		JOY_LOAD 			: out   std_logic;
 		JOY_DATA 			: in    std_logic;
-    	joyX_p7_o			: out   std_logic								:= '1';
+		joyX_p7_o			: out   std_logic								:= 'Z';
 
 		-- Audio
 		dac_l_o				: out   std_logic								:= '0';
 		dac_r_o				: out   std_logic								:= '0';
 		ear_i					: in    std_logic;
-		mic_o					: out   std_logic								:= '0';
-
+		mic_o					: out   std_logic							:= '0';
+		
 		-- VGA
 		vga_r_o				: out   std_logic_vector(4 downto 0)	:= (others => '0');
 		vga_g_o				: out   std_logic_vector(4 downto 0)	:= (others => '0');
@@ -195,9 +195,15 @@ architecture behavior of CycloneV_top is
 	signal volumes_s			: volumes_t;
 
 	-- Video
+	signal rgb_r_s				: std_logic_vector( 3 downto 0);
+	signal rgb_g_s				: std_logic_vector( 3 downto 0);
+	signal rgb_b_s				: std_logic_vector( 3 downto 0);
+	signal rgb_hsync_n_s		: std_logic;
+	signal rgb_vsync_n_s		: std_logic;
+	signal vga_en_s			: std_logic;
+	signal ntsc_pal_s			: std_logic;
+
 	signal rgb_col_s			: std_logic_vector( 3 downto 0);
---	signal rgb_hsync_n_s		: std_logic;
---	signal rgb_vsync_n_s		: std_logic;
 	signal cnt_hor_s			: std_logic_vector( 8 downto 0);
 	signal cnt_ver_s			: std_logic_vector( 7 downto 0);
 	signal vga_hsync_n_s		: std_logic;
@@ -211,6 +217,7 @@ architecture behavior of CycloneV_top is
 	signal odd_line_s			: std_logic;
 	signal sound_hdmi_l_s	: std_logic_vector(15 downto 0);
 	signal sound_hdmi_r_s	: std_logic_vector(15 downto 0);
+
 --	signal tdms_r_s			: std_logic_vector( 9 downto 0);
 --	signal tdms_g_s			: std_logic_vector( 9 downto 0);
 --	signal tdms_b_s			: std_logic_vector( 9 downto 0);
@@ -272,16 +279,12 @@ architecture behavior of CycloneV_top is
 	signal joy1right		: std_logic								:= '1';
 	signal joy1fire1		: std_logic								:= '1';
 	signal joy1fire2		: std_logic								:= '1';
---	signal joy1fire3		: std_logic								:= '1';
---	signal joy1start		: std_logic								:= '1';
 	signal joy2up			: std_logic								:= '1';
 	signal joy2down		: std_logic								:= '1';
 	signal joy2left		: std_logic								:= '1';
 	signal joy2right		: std_logic								:= '1';
 	signal joy2fire1		: std_logic								:= '1';
 	signal joy2fire2		: std_logic								:= '1';
---	signal joy2fire3		: std_logic								:= '1';
---	signal joy2start		: std_logic								:= '1';
 	
    component pll1 is
 	Port ( 	
@@ -311,16 +314,12 @@ architecture behavior of CycloneV_top is
 				joy1right	: out std_logic;
 				joy1fire1	: out std_logic;
 				joy1fire2	: out std_logic;
---				joy1fire3	: out std_logic;
---				joy1start	: out std_logic;
 				joy2up		: out std_logic;
 				joy2down		: out std_logic;
 				joy2left		: out std_logic;
 				joy2right	: out std_logic;
 				joy2fire1	: out std_logic;
 				joy2fire2	: out std_logic
---				joy2fire3	: out std_logic;
---				joy2start	: out std_logic
  	);
    end component;
 
@@ -376,7 +375,7 @@ begin
 		hw_id_g			=> 8,
 		hw_txt_g			=> "Cyclone V Board",
 		hw_version_g	=> actual_version,
-		video_opt_g		=> 3,							-- No dblscan and external palette (Color in rgb_r_o)
+		video_opt_g		=> 1,						-- dblscan configurable
 		ramsize_g		=> 8192,
 		hw_hashwds_g	=> '0'
 	)
@@ -468,17 +467,29 @@ begin
 		joy2_btn2_o		=> open,
 		joy2_out_o		=> open,
 		-- Video
-		cnt_hor_o		=> cnt_hor_s,
-		cnt_ver_o		=> cnt_ver_s,
-		rgb_r_o			=> rgb_col_s,
-		rgb_g_o			=> open,
-		rgb_b_o			=> open,
-		hsync_n_o		=> open,
-		vsync_n_o		=> open,
-		ntsc_pal_o		=> open,
-		vga_on_k_i		=> '0',
-		scanline_on_k_i=> '0',
-		vga_en_o			=> open,
+--		cnt_hor_o		=> cnt_hor_s,
+--		cnt_ver_o		=> cnt_ver_s,
+--		rgb_r_o			=> rgb_col_s,
+--		rgb_g_o			=> open,
+--		rgb_b_o			=> open,
+--		hsync_n_o		=> open,
+--		vsync_n_o		=> open,
+
+		cnt_hor_o		=> open,
+		cnt_ver_o		=> open,
+		rgb_r_o			=> rgb_r_s,
+		rgb_g_o			=> rgb_g_s,
+		rgb_b_o			=> rgb_b_s,
+		hsync_n_o		=> rgb_hsync_n_s,
+		vsync_n_o		=> rgb_vsync_n_s,
+
+		ntsc_pal_o		=> ntsc_pal_s,
+		vga_on_k_i		=> extra_keys_s(2),		-- Print Screen
+		scanline_on_k_i=> extra_keys_s(1),		-- Scroll Lock
+		vga_en_o			=> vga_en_s,
+		scanline_en_o	=> open,
+		vertfreq_on_k_i=> extra_keys_s(0),		-- Pause/Break
+
 		-- SPI/SD
 		spi_cs_n_o		=> sd_cs_n_o,
 		spi_sclk_o		=> sd_sclk_o,
@@ -492,7 +503,7 @@ begin
 		D_ipl_en_o		=> open
 	);
 
-   --joyX_p7_o <= not joy1_out_s;		-- for Sega Genesis joypad
+	--joyX_p7_o <= not joy1_out_s;		-- for Sega Genesis joypad
 	--joy2_p7_o <= not joy2_out_s;		-- for Sega Genesis joypad
 
 	-- RAM
@@ -578,16 +589,12 @@ begin
 		joy1right		=> joy1right,
 		joy1fire1		=> joy1fire1,
 		joy1fire2		=> joy1fire2,
---		joy1fire3		=> joy1fire3,
---		joy1start		=> joy1start,
 		joy2up  			=> joy2up,
 		joy2down			=> joy2down,
 		joy2left			=> joy2left,
 		joy2right		=> joy2right,
 		joy2fire1		=> joy2fire1,
 		joy2fire2		=> joy2fire2
---		joy2fire3		=> joy2fire3,
---		joy2start		=> joy2start
 	);
 
 	
@@ -612,6 +619,7 @@ begin
 	audio_l_amp_s	<= audio_l_s(15) & audio_l_s(13 downto 0) & "0";
 	audio_r_amp_s	<= audio_r_s(15) & audio_r_s(13 downto 0) & "0";
 
+	
 	-- Left Channel
 	audiol : entity work.dac
 	generic map (
@@ -679,90 +687,90 @@ begin
 		end if;
 	end process;
 
-	-- VGA framebuffer
-	vga: entity work.vga
-	port map (
-		I_CLK			=> clock_master_s,
-		I_CLK_VGA	=> clock_vga_s,
-		I_COLOR		=> rgb_col_s,
-		I_HCNT		=> cnt_hor_s,
-		I_VCNT		=> cnt_ver_s,
-		O_HSYNC		=> vga_hsync_n_s,
-		O_VSYNC		=> vga_vsync_n_s,
-		O_COLOR		=> vga_col_s,
-		O_HCNT		=> open,
-		O_VCNT		=> open,
-		O_H			=> open,
-		O_BLANK		=> vga_blank_s
-	);
+--	-- VGA framebuffer
+--	vga: entity work.vga
+--	port map (
+--		I_CLK			=> clock_master_s,
+--		I_CLK_VGA	=> clock_vga_s,
+--		I_COLOR		=> rgb_col_s,
+--		I_HCNT		=> cnt_hor_s,
+--		I_VCNT		=> cnt_ver_s,
+--		O_HSYNC		=> vga_hsync_n_s,
+--		O_VSYNC		=> vga_vsync_n_s,
+--		O_COLOR		=> vga_col_s,
+--		O_HCNT		=> open,
+--		O_VCNT		=> open,
+--		O_H			=> open,
+--		O_BLANK		=> vga_blank_s
+--	);
 
 	-- Scanlines
-	process(vga_hsync_n_s,vga_vsync_n_s)
-	begin
-		if vga_vsync_n_s = '0' then
-			odd_line_s <= '0';
-		elsif rising_edge(vga_hsync_n_s) then
-			odd_line_s <= not odd_line_s;
-		end if;
-	end process;
-
-	-- Index => RGB 
-	process (clock_vga_s)
-		variable vga_col_v	: integer range 0 to 15;
-		variable vga_rgb_v	: std_logic_vector(15 downto 0);
-		variable vga_r_v		: std_logic_vector( 3 downto 0);
-		variable vga_g_v		: std_logic_vector( 3 downto 0);
-		variable vga_b_v		: std_logic_vector( 3 downto 0);
-		type ram_t is array (natural range 0 to 15) of std_logic_vector(15 downto 0);
-		constant rgb_c : ram_t := (
-				--      RB0G
-				0  => X"0000",
-				1  => X"0000",
-				2  => X"240C",
-				3  => X"570D",
-				4  => X"5E05",
-				5  => X"7F07",
-				6  => X"D405",
-				7  => X"4F0E",
-				8  => X"F505",
-				9  => X"F707",
-				10 => X"D50C",
-				11 => X"E80C",
-				12 => X"230B",
-				13 => X"CB09",
-				14 => X"CC0C",
-				15 => X"FF0F"
-		);
-	begin
-		if rising_edge(clock_vga_s) then
-			vga_col_v := to_integer(unsigned(vga_col_s));
-			vga_rgb_v := rgb_c(vga_col_v);
-			if scanlines_en_s = '1' then
-				--
-				if vga_rgb_v(15 downto 12) > 1 and odd_line_s = '1' then
-					vga_r_s <= vga_rgb_v(15 downto 12) - 2;
-				else
-					vga_r_s <= vga_rgb_v(15 downto 12);
-				end if;
-				--
-				if vga_rgb_v(11 downto 8) > 1 and odd_line_s = '1' then
-					vga_b_s <= vga_rgb_v(11 downto 8) - 2;
-				else
-					vga_b_s <= vga_rgb_v(11 downto 8);
-				end if;
-				--
-				if vga_rgb_v(3 downto 0) > 1 and odd_line_s = '1' then
-					vga_g_s <= vga_rgb_v(3 downto 0) - 2;
-				else
-					vga_g_s <= vga_rgb_v(3 downto 0);
-				end if;
-			else
-				vga_r_s <= vga_rgb_v(15 downto 12);
-				vga_b_s <= vga_rgb_v(11 downto  8);
-				vga_g_s <= vga_rgb_v( 3 downto  0);
-			end if;
-		end if;
-	end process;
+--	process(vga_hsync_n_s,vga_vsync_n_s)
+--	begin
+--		if vga_vsync_n_s = '0' then
+--			odd_line_s <= '0';
+--		elsif rising_edge(vga_hsync_n_s) then
+--			odd_line_s <= not odd_line_s;
+--		end if;
+--	end process;
+--
+--	-- Index => RGB 
+--	process (clock_vga_s)
+--		variable vga_col_v	: integer range 0 to 15;
+--		variable vga_rgb_v	: std_logic_vector(15 downto 0);
+--		variable vga_r_v		: std_logic_vector( 3 downto 0);
+--		variable vga_g_v		: std_logic_vector( 3 downto 0);
+--		variable vga_b_v		: std_logic_vector( 3 downto 0);
+--		type ram_t is array (natural range 0 to 15) of std_logic_vector(15 downto 0);
+--		constant rgb_c : ram_t := (
+--				--      RB0G
+--				0  => X"0000",
+--				1  => X"0000",
+--				2  => X"240C",
+--				3  => X"570D",
+--				4  => X"5E05",
+--				5  => X"7F07",
+--				6  => X"D405",
+--				7  => X"4F0E",
+--				8  => X"F505",
+--				9  => X"F707",
+--				10 => X"D50C",
+--				11 => X"E80C",
+--				12 => X"230B",
+--				13 => X"CB09",
+--				14 => X"CC0C",
+--				15 => X"FF0F"
+--		);
+--	begin
+--		if rising_edge(clock_vga_s) then
+--			vga_col_v := to_integer(unsigned(vga_col_s));
+--			vga_rgb_v := rgb_c(vga_col_v);
+--			if scanlines_en_s = '1' then
+--				--
+--				if vga_rgb_v(15 downto 12) > 1 and odd_line_s = '1' then
+--					vga_r_s <= vga_rgb_v(15 downto 12) - 2;
+--				else
+--					vga_r_s <= vga_rgb_v(15 downto 12);
+--				end if;
+--				--
+--				if vga_rgb_v(11 downto 8) > 1 and odd_line_s = '1' then
+--					vga_b_s <= vga_rgb_v(11 downto 8) - 2;
+--				else
+--					vga_b_s <= vga_rgb_v(11 downto 8);
+--				end if;
+--				--
+--				if vga_rgb_v(3 downto 0) > 1 and odd_line_s = '1' then
+--					vga_g_s <= vga_rgb_v(3 downto 0) - 2;
+--				else
+--					vga_g_s <= vga_rgb_v(3 downto 0);
+--				end if;
+--			else
+--				vga_r_s <= vga_rgb_v(15 downto 12);
+--				vga_b_s <= vga_rgb_v(11 downto  8);
+--				vga_g_s <= vga_rgb_v( 3 downto  0);
+--			end if;
+--		end if;
+--	end process;
 
 
 --	sound_hdmi_l_s <= '0' & std_logic_vector(audio_l_amp_s(15 downto 1));
@@ -815,11 +823,24 @@ begin
 --	tmds_o(0)	<= tdms_n_s(3);	-- CLK-	
 
 
-	vga_r_o			<= vga_r_s & '0';
-	vga_g_o			<= vga_g_s & '0';
-	vga_b_o			<= vga_b_s & '0';
-	vga_hsync_n_o	<= vga_hsync_n_s;
-	vga_vsync_n_o	<= vga_vsync_n_s;
+--	vga_r_o			<= vga_r_s & '0';
+--	vga_g_o			<= vga_g_s & '0';
+--	vga_b_o			<= vga_b_s & '0';
+--	vga_hsync_n_o	<= vga_hsync_n_s;
+--	vga_vsync_n_o	<= vga_vsync_n_s;
+
+
+
+	-- RGB/VGA Output
+	vga_r_o			<= rgb_r_s & '0';
+	vga_g_o			<= rgb_g_s & '0';
+	vga_b_o			<= rgb_b_s & '0';
+	vga_hsync_n_o	<= rgb_hsync_n_s			when vga_en_s = '1'	else (rgb_hsync_n_s and rgb_vsync_n_s);
+	vga_vsync_n_o	<= rgb_vsync_n_s			when vga_en_s = '1'	else '1';
+--	vga_ntsc_o		<= not ntsc_pal_s;
+--	vga_pal_o		<= ntsc_pal_s;
+
+
 
 	-- Peripheral BUS control
 	bus_data_from_s	<= jt51_data_from_s	when jt51_hd_s = '1'	else
