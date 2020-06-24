@@ -14,7 +14,7 @@ This is the second version. There are changes in the SRAM pin positions and in t
 - SD socket.<BR>
 - PS/2 Keyboard.<BR>
 - PS/2 mouse.<BR>
-- 2X Joystick Atari. (6 button megadrive compatible)<BR>
+- 2X Joystick Atari.<span style="color:red;"> 6 button megadrive compatible </span><BR>
 - JTAG input for USB Blaster.<BR>
 - VGA output.<BR> 
 - 3.5mm female jack for audio stereo output.<BR> 
